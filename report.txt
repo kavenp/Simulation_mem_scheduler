@@ -1,0 +1,64 @@
+Report for Project 1 Computer Systems
+Author: Kaven Peng kavenp 696573
+
+First, a little about the fcfs schedule or the "First Come First Served" process scheduling method.
+It's very simple and easy to understand. When you run processes on it, the first process to arrive
+will use the CPU until it has finished. The upside of using this algorithm would be its easy implementation. However in terms of process scheduling this algorithm is non-optimal.
+
+In extreme cases where large processes get to the CPU first, these processes would take up all of the time available and leave none for smaller processes, essentially forcing these processes to wait or just stop altogether.
+
+Now, more about the more interesting process scheduling method: Multi-level feedback queue.
+This scheduling method is essentially a round robin with different quantum sizes and priority levels.
+Newer processes get higher priority with smaller quantums, while older processes that still need more time are placed on a lower priority queue with a longer quantum.
+
+This creates a more balanced process schedule because given how small the quantum is on the first level, each new incoming process no matter its size will get its turn on the CPU. This means that one large process will not be able to hold up every other process just because it got there first.
+
+However this method is not without its weaknesses. The longer-running processes will be at the mercy of how often new schedules are introduced. For example:
+an input file of this manner:
+
+0 1 5 20
+1 2 5 2
+2 3 5 2
+3 4 5 2
+4 5 5 2
+5 6 5 2
+
+Has this output when run in my simulation with quantum 1,2,3 being 2,4,8 respectively and a memory size of 100:
+
+time 0, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 2, 2 running, numprocesses=2, numholes=1, memusage=10%
+time 4, 3 running, numprocesses=2, numholes=1, memusage=10%
+time 6, 4 running, numprocesses=2, numholes=1, memusage=10%
+time 8, 5 running, numprocesses=2, numholes=1, memusage=10%
+time 10, 6 running, numprocesses=2, numholes=1, memusage=10%
+time 12, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 16, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 24, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 30, simulation finished.
+
+As you can see, as long as there are new processes coming in, there is no chance for the longer-running process 1 to get any time on the CPU. However if there was a slight change, such as changing
+quantum1 = 1. Then we get this output:
+
+time 0, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 1, 2 running, numprocesses=2, numholes=1, memusage=10%
+time 2, 3 running, numprocesses=3, numholes=1, memusage=15%
+time 3, 4 running, numprocesses=4, numholes=1, memusage=20%
+time 4, 5 running, numprocesses=5, numholes=1, memusage=25%
+time 5, 6 running, numprocesses=6, numholes=1, memusage=30%
+time 6, 1 running, numprocesses=6, numholes=1, memusage=30%
+time 10, 2 running, numprocesses=6, numholes=1, memusage=30%
+time 11, 3 running, numprocesses=5, numholes=2, memusage=25%
+time 12, 4 running, numprocesses=4, numholes=2, memusage=20%
+time 13, 5 running, numprocesses=3, numholes=2, memusage=15%
+time 14, 6 running, numprocesses=2, numholes=2, memusage=10%
+time 15, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 23, 1 running, numprocesses=1, numholes=1, memusage=5%
+time 30, simulation finished.
+
+I would consider this be much better than the previous output, since each of the processes reach the 2nd level instead of always finishing after the first quantum, as well as making better use of memory.
+
+This leads to a more difficult and seemingly more important question now that I understand that a Multi-Level Feedback Queue is much better than a FCFS process scheduling system: Is there an optimal quantum size for each level? How many levels should we have for this kind of system?
+
+I'm uncertain if these questions have concrete answers since it seems that process scheduling is highly contextual. Everything is determined by what kind of processes you are expecting to handle with the system. Not to mention the fact that there is no way to get an accurate value for real world process's burst time.
+
+All in all, I enjoyed this project and I definitely know more about memory management and process scheduling.
